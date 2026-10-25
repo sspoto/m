@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Marketing Flashcards: Targeting & Segmentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Literata:opsz,wght@7..72,400;7..72,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --desk:#DCE3EA; --ink:#1B2733; --muted:#5A6B7B; --paper:#FFFFFF; --rule:#BFD3E6; --margin:#E4848A;
+  --fam:#2F7D5B; --fam-soft:#DDF0E6; --unf:#B85A12; --unf-soft:#FBE7D6; --line:#B9C4CF; --chip:#EEF2F6;
+  --shadow:0 1px 0 rgba(27,39,51,.08),0 14px 30px -12px rgba(27,39,51,.35);
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --desk:#141B22; --ink:#E6ECF1; --muted:#97A6B4; --paper:#1F2933; --rule:#2C3E50; --margin:#8A3F45;
+    --fam:#5CC495; --fam-soft:#173628; --unf:#F0A060; --unf-soft:#3D2614; --line:#33424F; --chip:#25313C;
+    --shadow:0 14px 30px -12px rgba(0,0,0,.7); color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --desk:#141B22; --ink:#E6ECF1; --muted:#97A6B4; --paper:#1F2933; --rule:#2C3E50; --margin:#8A3F45;
+  --fam:#5CC495; --fam-soft:#173628; --unf:#F0A060; --unf-soft:#3D2614; --line:#33424F; --chip:#25313C;
+  --shadow:0 14px 30px -12px rgba(0,0,0,.7); color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--desk);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.45;min-height:100%}
+.wrap{max-width:760px;margin:0 auto;padding:28px 18px 40px}
+h1{font-weight:800;font-size:clamp(1.6rem,4.5vw,2.3rem);letter-spacing:-.02em;line-height:1.05;margin:0 0 6px}
+.sub{color:var(--muted);margin:0 0 22px}
+
+.modes{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.mode{font:inherit;font-weight:600;border:1.5px solid var(--line);background:transparent;color:var(--ink);padding:8px 14px;border-radius:999px;cursor:pointer;display:flex;gap:8px;align-items:center}
+.mode .n{font-weight:400;color:var(--muted)}
+.mode[aria-pressed="true"]{background:var(--ink);color:var(--desk);border-color:var(--ink)}
+.mode[aria-pressed="true"] .n{color:inherit;opacity:.75}
+.mode.fam[aria-pressed="true"]{background:var(--fam);border-color:var(--fam);color:#fff}
+.mode.unf[aria-pressed="true"]{background:var(--unf);border-color:var(--unf);color:#fff}
+
+.bar{height:6px;border-radius:3px;background:var(--chip);display:flex;overflow:hidden;margin-bottom:22px}
+.bar span{display:block;height:100%;transition:width .3s}
+.bar .f{background:var(--fam)} .bar .u{background:var(--unf)}
+
+.meta{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:.92rem;margin-bottom:10px;gap:10px}
+.tag{font-size:.85rem;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--chip);color:var(--muted)}
+.tag.f{background:var(--fam-soft);color:var(--fam)} .tag.u{background:var(--unf-soft);color:var(--unf)}
+
+.scene{perspective:1400px;cursor:pointer;outline:none}
+.card{position:relative;min-height:300px;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.3,.7,.3,1)}
+.card.flipped{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--paper);border-radius:6px;box-shadow:var(--shadow);padding:52px 34px 30px 64px;display:flex;flex-direction:column;justify-content:center;
+  background-image:linear-gradient(var(--paper) 0 0),repeating-linear-gradient(to bottom,transparent 0 31px,var(--rule) 31px 32px);
+  background-size:100% 40px,100% 100%;background-repeat:no-repeat,repeat;background-position:0 0,0 8px}
+.face::before{content:"";position:absolute;left:46px;top:0;bottom:0;width:1.5px;background:var(--margin)}
+.face::after{content:"";position:absolute;left:0;right:0;top:39px;height:1.5px;background:var(--margin);opacity:.6}
+.back{transform:rotateY(180deg)}
+.side{position:absolute;top:12px;left:64px;font-size:.85rem;color:var(--muted)}
+.text{font-family:Literata,Georgia,"Times New Roman",serif;font-size:clamp(1.15rem,3.2vw,1.45rem);line-height:32px;margin:0}
+.front .text{font-weight:600}
+.hint{position:absolute;bottom:12px;right:18px;font-size:.82rem;color:var(--muted)}
+.scene:focus-visible .face{outline:3px solid var(--ink);outline-offset:3px}
+
+.actions{display:grid;grid-template-columns:auto 1fr 1fr auto;gap:10px;margin-top:22px}
+button.btn{font:inherit;font-weight:600;border:none;border-radius:10px;padding:14px 16px;cursor:pointer;color:var(--ink);background:var(--chip)}
+button.btn:focus-visible,.mode:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.btn.f{background:var(--fam);color:#fff} .btn.u{background:var(--unf);color:#fff}
+.btn:disabled{opacity:.4;cursor:default}
+.btn kbd{font-family:inherit;font-weight:400;opacity:.75;font-size:.8em;margin-left:6px}
+
+.tools{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center;margin-top:22px;font-size:.92rem;color:var(--muted)}
+.tools label{display:flex;gap:8px;align-items:center;cursor:pointer}
+.link{font:inherit;background:none;border:none;color:var(--muted);text-decoration:underline;cursor:pointer;padding:0}
+.empty{background:var(--paper);border-radius:6px;box-shadow:var(--shadow);padding:40px 30px;text-align:center}
+.empty h2{margin:0 0 8px;font-size:1.3rem}
+.empty p{margin:0;color:var(--muted)}
+.voice{margin-top:18px;padding:14px 16px;border:1.5px dashed var(--line);border-radius:10px}
+.voice-row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+#hf-btn[aria-pressed="true"]{background:var(--ink);color:var(--desk)}
+.hf-status{color:var(--muted);font-size:.92rem}
+.cmds{margin-top:10px;font-size:.92rem;color:var(--muted)}
+.cmds summary{cursor:pointer}
+.cmds p{margin:8px 0 0}
+@media (max-width:520px){
+  .face{padding:50px 20px 34px 52px}
+  .face::before{left:36px} .side{left:52px}
+  .actions{grid-template-columns:1fr 1fr}
+  .actions .nav{grid-row:2}
+}
+@media (prefers-reduced-motion:reduce){.card{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Targeting &amp; segmentation</h1>
+  <p class="sub">Flip each card, then sort it. Afterwards, study just the pile you choose.</p>
+
+  <div class="modes" role="group" aria-label="Which cards to study">
+    <button class="mode" data-mode="all">All <span class="n" id="c-all"></span></button>
+    <button class="mode" data-mode="new">Not sorted yet <span class="n" id="c-new"></span></button>
+    <button class="mode unf" data-mode="unf">Unfamiliar <span class="n" id="c-unf"></span></button>
+    <button class="mode fam" data-mode="fam">Familiar <span class="n" id="c-fam"></span></button>
+  </div>
+  <div class="bar" aria-hidden="true"><span class="f" id="bar-f"></span><span class="u" id="bar-u"></span></div>
+
+  <div id="study"></div>
+
+  <div class="voice">
+    <div class="voice-row">
+      <button class="btn" id="hf-btn" aria-pressed="false">Start hands-free</button>
+      <span id="hf-status" class="hf-status" aria-live="polite"></span>
+    </div>
+    <details class="cmds"><summary>Voice commands</summary>
+      <p>Each card is read aloud, then the app listens. Say “answer” or “flip” to hear the other side, “familiar” or “got it”, “unfamiliar” or “don’t know”, “next”, “back”, “repeat”, “start over”, or “stop”.</p>
+    </details>
+  </div>
+
+  <div class="tools">
+    <label><input type="checkbox" id="shuffle"> Shuffle</label>
+    <label><input type="checkbox" id="reverse"> Show answer side first</label>
+    <button class="link" id="reset">Clear all sorting</button>
+  </div>
+</div>
+
+<script>
+const RAW = [
+["What is the focus of tactical targeting in marketing?","To reach strategically important customers effectively and efficiently"],
+["What is the primary goal of strategic targeting in marketing?","To create a better fit between the offering’s benefits and the customers’ needs by deliberately choosing to ignore some customers to better serve others."],
+["How does tactical targeting differ from strategic targeting?","Tactical targeting focuses on reaching all strategically important customers in an effective and cost-efficient manner, without excluding potential customers."],
+["What is a key advantage of mass marketing?","It creates the largest potential market, leading to the lowest costs and potentially lower prices or higher margins."],
+["Needs-based Targeting","A targeting approach that focuses on identifying and serving smaller, well-defined groups based on specific needs."],
+["What is the role of strategic and tactical targeting in marketing?","Strategic targeting identifies customers with whom the company can establish a mutually beneficial relationship, while tactical targeting focuses on how to reach these customers effectively."],
+["What is a key tradeoff in effective strategic targeting?","Deliberately forgoing some potential customers"],
+["What are the two main principles of strategic targeting?","Target compatibility and target attractiveness"],
+["What does target compatibility reflect in strategic targeting?","The company’s ability to create superior customer value"],
+["What is an example of a strategic value that target customers can provide?","Social value"],
+["What is a core competency in the context of strategic targeting?","A source of competitive advantage that is difficult to imitate"],
+["What is the significance of target attractiveness in strategic targeting?","It reflects the ability of a market segment to create superior value for the company"],
+["What is strategic targeting?","Strategic targeting involves identifying target customers based on the company’s ability to meet their needs better than competitors while creating value for the company."],
+["Why is it important for companies to forgo some potential customers in strategic targeting?","Forgoing some potential customers allows companies to focus on those for whom they can create superior value, enhancing their competitive advantage."],
+["Target Compatibility","The company’s ability to fulfill the needs of target customers better than competitors, creating superior customer value."],
+["What are the two key questions a manager must address when evaluating a customer segment’s viability?","Can the company create superior value for these customers? Can these customers create superior value for the company?"],
+["Target Attractiveness","The ability of a market segment to create superior value for the company, including monetary and strategic value."],
+["What are the three main types of strategic value customers can bring to a company?","Social value, scale value, and information value."],
+["Monetary Value","The capability of customers to generate profits for the company, including revenues and costs associated with serving them."],
+["Which descriptors are involved in creating a customer profile for tactical targeting?","Demographic, geographic, behavioral, and psychographic"],
+["What principle of tactical targeting focuses on minimizing resource waste?","Cost efficiency"],
+["How do companies use personas in marketing?","To visualize target customers and understand their likely responses"],
+["Customer Profile","Observable factors involving demographic, geographic, behavioral, and psychographic descriptors used to identify target customers."],
+["Personas","Detailed profiles of hypothetical target consumers, used to visualize and understand target customers better."],
+["What are the two main principles of tactical targeting?","Effectiveness and cost efficiency."],
+["How does tactical targeting complement strategic targeting?","By identifying observable characteristics of target customers to effectively reach and communicate with them, addressing the unobservable nature of customer value."],
+["Effectiveness Principle","The degree to which a company can reach all strategically viable customers and make them aware of and give them access to its offering."],
+["What is a potential downside of product specialization?","The product may be supplanted by new technology"],
+["What is single-segment targeting?","Marketing to only one particular customer segment."],
+["Hyper-segmentation","A marketing approach that uses AI to create highly detailed and specific customer segments."],
+["Niche market","A small, well-defined segment with distinct needs, often willing to pay a premium for specialized offerings."],
+["What strategy did Hallmark use to target specific market segments?","Hallmark introduced card lines targeting specific segments, such as the LGBTQ+ community and ethnic groups."],
+["What is market segmentation? (short)","Dividing a market into well-defined slices"],
+["Which of the following is NOT a common type of market segmentation?","Technological"],
+["What demographic variable is often used to segment markets by generation?","Age"],
+["What is the primary focus of psychographic segmentation?","Psychological traits, lifestyle, or values"],
+["Which company is known for its gender-specific product design in the shaving market?","Gillette"],
+["What is a key characteristic of behavioral segmentation?","Dividing buyers based on their actions"],
+["Which segmentation type considers life stages such as marriage or buying a new home?","Stage in the Life Cycle"],
+["Which company used hip-hop culture in its marketing campaign to appeal to diverse audiences?","McDonald’s"],
+["What is market segmentation? (full)","Market segmentation divides a market into well-defined slices, consisting of groups of consumers with similar needs or characteristics."],
+["Demographic Segmentation","A type of market segmentation based on variables such as age, gender, income, education, and social class."],
+["Which demographic variable is used to group customers into generations like Millennials and Generation Z?","Age"],
+["Psychographic Segmentation","Dividing buyers into groups based on psychological traits, lifestyle, or values."],
+["Behavioral Segmentation","Segmenting markets based on consumer actions such as usage rate, loyalty status, and buyer-readiness stage."],
+["How does geographic segmentation divide the market?","By geographic units such as nations, states, regions, cities, or neighborhoods."],
+["Multicultural Marketing","Marketing that targets different ethnic and cultural segments with tailored marketing activities."],
+["Income Segmentation","A market segmentation strategy that categorizes consumers based on their income levels."],
+["Why did Timken shift its focus away from the auto industry?","To target more profitable sectors like aerospace and defense"],
+["How did Timken adjust its market strategy to improve profitability?","By shifting focus from the auto industry to heavy-processing, aerospace, and defense industries, and adjusting products, prices, and communications"],
+["What was the outcome for Timken after adjusting its market focus?","Timken became a global leader in engineered bearings and industrial motion products"],
+["Geographic segmentation","The division of the market into geographic units such as nations, states, regions, counties, cities, or neighborhoods."],
+["Psychographic segmentation (glossary)","Dividing buyers into groups on the basis of psychological traits, lifestyle, or values."],
+["Customer profile (glossary)","Observable customer characteristics which involve demographic, geographic, behavioral, and psychographic descriptors."],
+["Core competency","A company resource that (1) is a source of competitive advantage and makes a significant contribution to perceived customer benefits, (2) has applications in a wide variety of markets, and (3) is difficult for competitors to imitate."],
+["Tactical targeting","Identifies the ways in which the company can reach these strategically important customers."],
+["Target compatibility (glossary)","A reflection of the company’s ability to outdo the competition in fulfilling the needs of target customers—in other words, to create superior customer value."],
+["Mass customization","The ability of a company to meet each customer’s requirements—to prepare on a mass basis individually designed products, services, programs, and communications."],
+["Strategic targeting","Focuses on customers whose needs the company can fulfill by ensuring that its offerings are customized to their needs."],
+["Target attractiveness (glossary)","The ability of a market segment to create superior value for the company."],
+["Targeting","The process of identifying customers for whom the company will optimize its offering."],
+["Mass marketing","The firm ignores segment differences and goes after the whole market with one offer."],
+["Market segmentation","Dividing a market into well-defined slices. Each segment consists of a group of consumers who share a similar set of needs and/or profile characteristics."],
+["Behavioral segmentation (glossary)","Dividing buyers into groups on the basis of their actions."]
+];
+const CARDS = RAW.map((c,i)=>({id:"c"+i,q:c[0],a:c[1]}));
+const KEY="mkt-flashcards-v1";
+
+let state={marks:{},mode:"all",shuffle:false,reverse:false};
+try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s&&typeof s==="object")state={...state,...s,marks:s.marks||{}};}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+
+let deck=[],pos=0,flipped=false;
+const $=id=>document.getElementById(id);
+
+function inMode(c,m){const k=state.marks[c.id];
+  if(m==="fam")return k==="fam"; if(m==="unf")return k==="unf"; if(m==="new")return !k; return true;}
+function buildDeck(){
+  deck=CARDS.filter(c=>inMode(c,state.mode));
+  if(state.shuffle){for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];}}
+  pos=0;flipped=false;render();
+}
+function counts(){
+  let f=0,u=0;CARDS.forEach(c=>{if(state.marks[c.id]==="fam")f++;else if(state.marks[c.id]==="unf")u++;});
+  $("c-all").textContent=CARDS.length;$("c-fam").textContent=f;$("c-unf").textContent=u;$("c-new").textContent=CARDS.length-f-u;
+  $("bar-f").style.width=(f/CARDS.length*100)+"%";$("bar-u").style.width=(u/CARDS.length*100)+"%";
+}
+function esc(s){const d=document.createElement("div");d.textContent=s;return d.innerHTML;}
+const MODE_NAMES={all:"all cards",new:"unsorted cards",unf:"unfamiliar cards",fam:"familiar cards"};
+
+function render(){renderView();if(hf){const p=pendingPrefix;pendingPrefix="";readCurrent(p);}}
+function renderView(){
+  counts();
+  document.querySelectorAll(".mode").forEach(b=>b.setAttribute("aria-pressed",b.dataset.mode===state.mode));
+  const study=$("study");
+  if(!deck.length){
+    const msg={fam:["No familiar cards yet","Mark cards as Familiar while studying and they’ll collect here."],
+      unf:["No unfamiliar cards","Nothing is marked Unfamiliar right now. Study all cards to sort more."],
+      new:["Everything is sorted","Every card is marked. Pick Unfamiliar to focus on the ones you’re still learning."],
+      all:["No cards",""]}[state.mode];
+    study.innerHTML=`<div class="empty"><h2>${msg[0]}</h2><p>${msg[1]}</p></div>`;return;
+  }
+  if(pos>=deck.length){
+    study.innerHTML=`<div class="empty"><h2>Round finished</h2><p>You went through all ${deck.length} ${MODE_NAMES[state.mode]}.</p>
+    <p style="margin-top:16px"><button class="btn" id="again">Go again</button></p></div>`;
+    $("again").onclick=buildDeck;return;
+  }
+  const c=deck[pos],mark=state.marks[c.id];
+  const front=state.reverse?c.a:c.q, back=state.reverse?c.q:c.a;
+  const tag=mark==="fam"?'<span class="tag f">Familiar</span>':mark==="unf"?'<span class="tag u">Unfamiliar</span>':'<span class="tag">Not sorted</span>';
+  study.innerHTML=`
+    <div class="meta"><span>Card ${pos+1} of ${deck.length} in ${MODE_NAMES[state.mode]}</span>${tag}</div>
+    <div class="scene" id="scene" tabindex="0" role="button" aria-label="Flip card">
+      <div class="card ${flipped?"flipped":""}" id="card">
+        <div class="face front"><span class="side">${state.reverse?"Answer":"Question"}</span><p class="text">${esc(front)}</p><span class="hint">Tap or press space to flip</span></div>
+        <div class="face back"><span class="side">${state.reverse?"Question":"Answer"}</span><p class="text">${esc(back)}</p></div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn nav" id="prev" ${pos===0?"disabled":""} aria-label="Previous card">‹ Back</button>
+      <button class="btn u" id="mu">Unfamiliar<kbd>U</kbd></button>
+      <button class="btn f" id="mf">Familiar<kbd>F</kbd></button>
+      <button class="btn nav" id="next" aria-label="Skip to next card">Skip ›</button>
+    </div>`;
+  sizeCard();
+  $("scene").onclick=flip;
+  $("prev").onclick=()=>{if(pos>0){pos--;flipped=false;render();}};
+  $("next").onclick=()=>{pos++;flipped=false;render();};
+  $("mf").onclick=()=>markCard("fam");
+  $("mu").onclick=()=>markCard("unf");
+}
+function sizeCard(){
+  const card=$("card");if(!card)return;
+  let h=300;card.querySelectorAll(".face").forEach(f=>{f.style.position="relative";h=Math.max(h,f.offsetHeight);f.style.position="";});
+  card.style.minHeight=h+"px";
+}
+function flip(){flipped=!flipped;const c=$("card");if(c)c.classList.toggle("flipped",flipped);if(hf)readCurrent();}
+function markCard(m){
+  const c=deck[pos];if(!c)return;
+  state.marks[c.id]=m;save();pos++;flipped=false;render();
+}
+/* ---------- Hands-free voice mode ---------- */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+const TTS="speechSynthesis" in window;
+let hf=false,rec=null,tok=0,pendingPrefix="";
+function hfStatus(t){$("hf-status").textContent=t;}
+function stopListening(){if(rec){rec.onresult=rec.onerror=rec.onend=null;try{rec.abort();}catch(e){}rec=null;}}
+function say(text,then){
+  stopListening();const my=++tok;
+  if(!TTS){if(hf)(then||listen)();return;}
+  speechSynthesis.cancel();
+  let done=false,timer;
+  const fin=()=>{if(done||my!==tok)return;done=true;clearTimeout(timer);if(hf)(then||listen)();};
+  const u=new SpeechSynthesisUtterance(text);u.lang="en-US";u.rate=1;u.onend=fin;
+  /* iOS sometimes never fires onend, so fall back to a generous estimate */
+  timer=setTimeout(fin,Math.max(2500,text.split(/\s+/).length*450+1500));
+  if(hf)hfStatus("Reading…");
+  speechSynthesis.speak(u);
+}
+function listen(){
+  if(!hf||!SR)return;stopListening();
+  const my=tok;let handled=false;
+  rec=new SR();rec.lang="en-US";rec.continuous=false;rec.interimResults=false;rec.maxAlternatives=3;
+  rec.onresult=e=>{handled=true;const alts=[...e.results[0]].map(a=>a.transcript.toLowerCase().trim());handleCommand(alts);};
+  rec.onerror=e=>{if(e.error==="not-allowed"||e.error==="service-not-allowed"){handled=true;hfStop("Microphone access is blocked. Allow it for this site (on iPhone: Settings › Apps › Safari › Microphone), then try again.");}};
+  rec.onend=()=>{if(hf&&my===tok&&!handled)setTimeout(()=>{if(hf&&my===tok)listen();},250);};
+  try{rec.start();hfStatus("Listening…");}catch(e){}
+}
+const CMDS=[
+  ["stop",/\b(stop|pause|exit|quit)\b/],
+  ["unf",/\b(un ?familiar|not familiar|don'?t know|do not know|not sure|no idea|hard)\b/],
+  ["fam",/\b(familiar|know it|i know|got it|easy)\b/],
+  ["flip",/\b(flip|answer|show|turn|reveal)\b/],
+  ["restart",/\b(start over|restart|go again)\b/],
+  ["repeat",/\b(repeat|say again|read again|again)\b/],
+  ["next",/\b(next|skip)\b/],
+  ["back",/\b(back|previous)\b/]
+];
+function handleCommand(alts){
+  let cmd=null,heard=alts[0]||"";
+  for(const a of alts){for(const [n,re] of CMDS){if(re.test(a)){cmd=n;heard=a;break;}}if(cmd)break;}
+  if(!cmd){hfStatus(`Heard “${heard}”. Try “answer”, “familiar” or “unfamiliar”.`);listen();return;}
+  hfStatus(`Heard “${heard}”`);
+  const finished=!deck.length||pos>=deck.length;
+  if(cmd==="stop"){hfStop("Hands-free stopped.");if(TTS)speechSynthesis.speak(new SpeechSynthesisUtterance("Stopped."));return;}
+  if(cmd==="restart"){pendingPrefix="Starting over. ";buildDeck();return;}
+  if(finished){if(cmd==="back"&&pos>0){pos--;flipped=false;render();}else readCurrent();return;}
+  if(cmd==="flip")return flip();
+  if(cmd==="repeat")return readCurrent();
+  if(cmd==="fam"){pendingPrefix="Familiar. ";return markCard("fam");}
+  if(cmd==="unf"){pendingPrefix="Unfamiliar. ";return markCard("unf");}
+  if(cmd==="next"){pos++;flipped=false;return render();}
+  if(cmd==="back"){if(pos>0){pos--;flipped=false;render();}else readCurrent("This is the first card. ");}
+}
+function readCurrent(prefix=""){
+  if(!deck.length){say(prefix+"There are no cards in this pile.",()=>hfStop("No cards in this pile. Pick another one above."));return;}
+  if(pos>=deck.length){say(prefix+"Round finished. Say start over, or stop.");return;}
+  const c=deck[pos];
+  const front=state.reverse?c.a:c.q, back=state.reverse?c.q:c.a;
+  const label=flipped?(state.reverse?"Question: ":"Answer: "):"";
+  say(prefix+label+(flipped?back:front));
+}
+function hfStart(){
+  if(!SR){hfStatus("Voice commands aren’t supported in this browser. On iPhone, open the page in Safari.");return;}
+  hf=true;const b=$("hf-btn");b.setAttribute("aria-pressed","true");b.textContent="Stop hands-free";
+  /* touch the mic inside the tap so iOS asks for permission now */
+  try{const w=new SR();w.onstart=()=>{try{w.abort();}catch(e){}};w.onerror=()=>{};w.start();}catch(e){}
+  readCurrent("Hands-free on. ");
+}
+function hfStop(msg){
+  hf=false;tok++;stopListening();if(TTS)speechSynthesis.cancel();
+  const b=$("hf-btn");b.setAttribute("aria-pressed","false");b.textContent="Start hands-free";
+  hfStatus(msg||"");
+}
+$("hf-btn").onclick=()=>hf?hfStop("Hands-free stopped."):hfStart();
+
+document.querySelectorAll(".mode").forEach(b=>b.onclick=()=>{state.mode=b.dataset.mode;save();buildDeck();});
+$("shuffle").checked=state.shuffle;$("reverse").checked=state.reverse;
+$("shuffle").onchange=e=>{state.shuffle=e.target.checked;save();buildDeck();};
+$("reverse").onchange=e=>{state.reverse=e.target.checked;save();flipped=false;render();};
+$("reset").onclick=()=>{if(confirm("Clear the Familiar/Unfamiliar marks on every card?")){state.marks={};save();buildDeck();}};
+document.addEventListener("keydown",e=>{
+  if(e.target.tagName==="INPUT"||e.metaKey||e.ctrlKey||e.altKey)return;
+  if(pos>=deck.length)return;
+  const k=e.key.toLowerCase();
+  if(k===" "||k==="enter"){if(e.target.tagName==="BUTTON"&&k==="enter")return;e.preventDefault();flip();}
+  else if(k==="f")markCard("fam");
+  else if(k==="u")markCard("unf");
+  else if(k==="arrowright"){pos++;flipped=false;render();}
+  else if(k==="arrowleft"&&pos>0){pos--;flipped=false;render();}
+});
+window.addEventListener("resize",sizeCard);
+document.fonts&&document.fonts.ready.then(sizeCard);
+buildDeck();
+</script>
+</body>
+</html>
