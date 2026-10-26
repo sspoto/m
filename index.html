@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Marketing Flashcards: Targeting & Segmentation</title>
+<title>Marketing Flashcards</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Literata:opsz,wght@7..72,400;7..72,600&display=swap" rel="stylesheet">
@@ -34,6 +34,10 @@ body{margin:0;background:var(--desk);color:var(--ink);font-family:"Bricolage Gro
 h1{font-weight:800;font-size:clamp(1.6rem,4.5vw,2.3rem);letter-spacing:-.02em;line-height:1.05;margin:0 0 6px}
 .sub{color:var(--muted);margin:0 0 22px}
 
+.tabs{display:flex;gap:4px;border-bottom:1.5px solid var(--line);margin:0 0 18px;overflow-x:auto}
+.tab{font:inherit;font-weight:600;background:none;border:none;color:var(--muted);padding:10px 14px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1.5px;white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+.tab:focus-visible{outline:3px solid var(--ink);outline-offset:-3px}
 .modes{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
 .mode{font:inherit;font-weight:600;border:1.5px solid var(--line);background:transparent;color:var(--ink);padding:8px 14px;border-radius:999px;cursor:pointer;display:flex;gap:8px;align-items:center}
 .mode .n{font-weight:400;color:var(--muted)}
@@ -96,8 +100,9 @@ button.btn:focus-visible,.mode:focus-visible{outline:3px solid var(--ink);outlin
 </head>
 <body>
 <div class="wrap">
-  <h1>Targeting &amp; segmentation</h1>
+  <h1>Marketing flashcards</h1>
   <p class="sub">Flip each card, then sort it. Afterwards, study just the pile you choose.</p>
+  <div class="tabs" role="tablist" aria-label="Chapter" id="tabs"></div>
 
   <div class="modes" role="group" aria-label="Which cards to study">
     <button class="mode" data-mode="all">All <span class="n" id="c-all"></span></button>
@@ -122,7 +127,7 @@ button.btn:focus-visible,.mode:focus-visible{outline:3px solid var(--ink);outlin
   <div class="tools">
     <label><input type="checkbox" id="shuffle"> Shuffle</label>
     <label><input type="checkbox" id="reverse"> Show answer side first</label>
-    <button class="link" id="reset">Clear all sorting</button>
+    <button class="link" id="reset">Clear sorting for this chapter</button>
   </div>
 </div>
 
@@ -193,12 +198,89 @@ const RAW = [
 ["Market segmentation","Dividing a market into well-defined slices. Each segment consists of a group of consumers who share a similar set of needs and/or profile characteristics."],
 ["Behavioral segmentation (glossary)","Dividing buyers into groups on the basis of their actions."]
 ];
-const CARDS = RAW.map((c,i)=>({id:"c"+i,q:c[0],a:c[1]}));
+const RAW2 = [
+["What was the key insight from Walmart’s consumer research study?","Offers low prices and makes customers feel like smart shoppers"],
+["Which company uses AI to scan trending recipes for marketing insights?","Kellogg’s"],
+["What is a potential drawback of using AI in marketing research?","Credibility issues due to data quality"],
+["What is the primary role of marketing research?","To link the consumer, customer, and public to the marketer through information used to identify and define marketing opportunities and problems."],
+["Marketing Insight","Diagnostic information about how and why certain effects are observed in the marketplace and what that means to marketers."],
+["Why did Tropicana face a sales drop after redesigning its packaging?","They failed to adequately test for consumer reactions, leading to a 20% drop in sales."],
+["Syndicated-service research firms","Companies that gather consumer and trade information which they sell for a fee."],
+["How can AI benefit marketing research?","AI can enhance operational efficiency, provide real-time insights, and offer predictive analytics."],
+["Consumer & Market Knowledge (CMK) Department","Procter & Gamble’s department that guides brand and customer business development strategy based on consumer and market analysis."],
+["What was the key insight Walmart used to develop its ‘Save Money, Live Better’ campaign?","The insight that Walmart’s competitive advantages were low prices and the emotional benefit of making customers feel like smart shoppers."],
+["Custom marketing research firms","Firms that carry out specific marketing research projects tailored to client needs."],
+["In the context of marketing research, what is an example of secondary data?","Data collected for another purpose that already exists"],
+["Which research approach involves observing customers in their natural environment?","Observational Research"],
+["Which method is most versatile for personal interviews?","In Person"],
+["What is the main advantage of using online surveys?","Faster information collection"],
+["In marketing research, what is a ‘sampling unit’?","The group of individuals to be surveyed"],
+["What is the first step in the marketing research process?","Defining the problem"],
+["What type of research aims to identify the problem and suggest possible solutions?","Exploratory research"],
+["What is the main goal of causal research in marketing?","To test a cause-and-effect relationship"],
+["What is the purpose of developing a research plan in marketing research?","To gather the needed information efficiently and determine the cost"],
+["Secondary Data","Data that were collected for another purpose and already exist somewhere"],
+["Primary Data","Data freshly gathered for a specific purpose or project"],
+["What is ethnographic research?","A research approach that uses anthropology and social sciences to understand consumer behavior"],
+["What is the main advantage of using focus group research?","To uncover consumers’ real motivations and reasons for their behavior"],
+["Behavioral Research","Research that uses data from consumers’ purchasing behavior to understand their preferences"],
+["What is the main purpose of using experimental research in marketing?","To capture cause-and-effect relationships by controlling variables"],
+["Neuromarketing","Brain research on the effects of marketing stimuli"],
+["What is the role of data mining in marketing research?","To extract useful information about individuals, trends, and segments from available data"],
+["What is the difference between market potential and market forecast?","Market potential is the maximum sales that can be achieved, while market forecast is the expected market demand."],
+["Which method involves using past sales data to develop sales forecasts?","Past-sales analysis"],
+["What is market demand?","The total volume that could be bought by a defined customer group in a defined geographic area in a defined time period under a defined marketing program."],
+["What does a sales forecast help finance do?","Raise cash for investment and operations."],
+["What is market potential?","The maximum sales that can be achieved in an industry during a given period under a given level of industry marketing effort and extant environmental conditions."],
+["Company demand","The company’s estimated share of market demand at alternative levels of company marketing effort in a given time period."],
+["What is the purpose of a sales quota?","To define and stimulate sales effort, often set slightly higher than estimated sales to stretch the sales force’s effort."],
+["Sales budget","A conservative estimate of the expected volume of sales, primarily for making current purchasing, production, and cash flow decisions."],
+["How do companies commonly prepare forecasts?","By preparing a macroeconomic forecast first, followed by an industry forecast, and then a company sales forecast."],
+["Market forecast","The market demand projected for a future time period."],
+["What is the role of AI in marketing forecasting?","AI and advanced machine learning techniques automate and speed up tasks like analyzing sales and revenue and spotting industry trends."],
+["Past-sales analysis","Developing sales forecasts based on past sales using techniques like time-series analysis and statistical demand analysis."],
+["Which of the following is a short-term result metric in marketing?","Sales turnover"],
+["What is the main function of a marketing dashboard?","To visually display real-time indicators of marketing performance"],
+["Which company developed the ‘Good Times Index’ as a brand performance metric?","Heineken"],
+["What does the ‘Good Times Index’ measure for Heineken?","Feelings of joy and happiness"],
+["What type of metrics focus on product unit sales and market share?","Unit metrics"],
+["What is a key characteristic of marketing dashboards?","They provide a snapshot of key marketing metrics."],
+["What is the purpose of marketing metrics?","To help marketers quantify, compare, and interpret marketing performance."],
+["Marketing Dashboard","A concise set of interconnected performance drivers that visually display real-time indicators to ensure proper functioning of marketing efforts."],
+["What are the two parts firms can split the evaluation of marketing performance into?","Short-term results and long-term impact."],
+["Customer Metrics","Metrics that focus on how prospects become customers and examine how the customer experience contributes to the perception of value and competitive advantage."],
+["What is the ‘Good Times Index’ used by Heineken?","A brand performance metric composed of five measures related to joy and happiness, including open-mindedness and quality socializing."],
+["Cash-flow Metrics","Metrics that focus on the return on marketing investment (ROMI) in terms of generating short-term returns for the company."],
+["Why is it important to choose the right performance metrics?","Because focusing on the wrong metrics can make managers overlook important opportunities and threats, steering the company in the wrong direction."],
+["Marketing metrics","The set of measures that help marketers quantify, compare, and interpret their performance."],
+["Market demand","The total volume that could be bought by a defined customer group in a defined geographic area in a defined time period in a defined marketing environment under a defined marketing program."],
+["Market forecast (glossary)","The market demand projected for a future time period."],
+["Company sales potential","The expected level of company sales for a given time period based on market trends and company marketing efforts."],
+["Secondary data (glossary)","Data that were collected for another purpose and already exist somewhere."],
+["Observational research","Gathering fresh data by observing unobtrusively as customers shop or consume products."],
+["Survey research","A form of research companies use to assess people’s knowledge, beliefs, preferences, and satisfaction."],
+["Company demand (glossary)","The company’s estimated share of market demand at alternative levels of company marketing effort in a given time period."],
+["Primary data (glossary)","Data freshly gathered for a specific purpose or project."],
+["Focus group","A gathering of a small group of people carefully selected for demographic, psychographic, or other considerations and convened to discuss various topics at length, sometimes for a small payment."],
+["Behavioral research (glossary)","Research that uses traces of customers’ purchasing behavior (store scanning data, catalog purchases, customer databases) to gain a better understanding of customers and their actions."],
+["Market potential","The maximum sales that can be achieved in an industry during a given period, under a given level of industry marketing effort, and under extant environmental conditions."],
+["Marketing dashboard (glossary)","A summary set of relevant internal and external measures that a company assembles for synthesis and interpretation."],
+["Ethnographic research","Immersive research using concepts and tools from anthropology and other social sciences to provide deep cultural understanding of how people live and work."],
+["Questionnaire","A set of questions presented to respondents."]
+];
+/* To add a chapter: paste a new RAW3 list above, then add a line here with a new id and prefix. */
+const CHAPTERS = [
+  {id:"seg", name:"Segmentation & targeting", cards:RAW.map((c,i)=>({id:"c"+i,q:c[0],a:c[1]}))},
+  {id:"res", name:"Research, forecasting & metrics", cards:RAW2.map((c,i)=>({id:"r"+i,q:c[0],a:c[1]}))}
+];
+let CARDS;
 const KEY="mkt-flashcards-v1";
 
-let state={marks:{},mode:"all",shuffle:false,reverse:false};
+let state={marks:{},mode:"all",shuffle:false,reverse:false,chapter:"seg"};
 try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s&&typeof s==="object")state={...state,...s,marks:s.marks||{}};}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+function chapter(){return CHAPTERS.find(c=>c.id===state.chapter)||CHAPTERS[0];}
+CARDS=chapter().cards;
 
 let deck=[],pos=0,flipped=false;
 const $=id=>document.getElementById(id);
@@ -221,6 +303,7 @@ const MODE_NAMES={all:"all cards",new:"unsorted cards",unf:"unfamiliar cards",fa
 function render(){renderView();if(hf){const p=pendingPrefix;pendingPrefix="";readCurrent(p);}}
 function renderView(){
   counts();
+  document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.ch===chapter().id));
   document.querySelectorAll(".mode").forEach(b=>b.setAttribute("aria-pressed",b.dataset.mode===state.mode));
   const study=$("study");
   if(!deck.length){
@@ -344,11 +427,13 @@ function hfStop(msg){
 }
 $("hf-btn").onclick=()=>hf?hfStop("Hands-free stopped."):hfStart();
 
+$("tabs").innerHTML=CHAPTERS.map(c=>`<button class="tab" role="tab" data-ch="${c.id}">${esc(c.name)} <span class="n">${c.cards.length}</span></button>`).join("");
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{state.chapter=b.dataset.ch;CARDS=chapter().cards;save();buildDeck();});
 document.querySelectorAll(".mode").forEach(b=>b.onclick=()=>{state.mode=b.dataset.mode;save();buildDeck();});
 $("shuffle").checked=state.shuffle;$("reverse").checked=state.reverse;
 $("shuffle").onchange=e=>{state.shuffle=e.target.checked;save();buildDeck();};
 $("reverse").onchange=e=>{state.reverse=e.target.checked;save();flipped=false;render();};
-$("reset").onclick=()=>{if(confirm("Clear the Familiar/Unfamiliar marks on every card?")){state.marks={};save();buildDeck();}};
+$("reset").onclick=()=>{if(confirm(`Clear the Familiar/Unfamiliar marks for “${chapter().name}”?`)){CARDS.forEach(c=>delete state.marks[c.id]);save();buildDeck();}};
 document.addEventListener("keydown",e=>{
   if(e.target.tagName==="INPUT"||e.metaKey||e.ctrlKey||e.altKey)return;
   if(pos>=deck.length)return;
